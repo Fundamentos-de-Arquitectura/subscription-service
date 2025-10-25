@@ -73,7 +73,6 @@ Permite integrar cualquier pasarela sin modificar el núcleo del sistema.
 | Suscribir usuario | Procesa un pago y activa una suscripción | /api/v1/subscriptions/subscribe/{userId}?planName={name} | POST |
 | Consultar suscripción | Muestra la última suscripción del usuario (activa o cancelada) | /api/v1/subscriptions/{userId} | GET |
 | Cancelar suscripción | Cambia estado a CANCELLED | /api/v1/subscriptions/cancel/{userId} | DELETE |
-| Historial | Lista todas las suscripciones del usuario | /api/v1/subscriptions/history/{userId} | GET |
 
 ## Integración con pagos
 
