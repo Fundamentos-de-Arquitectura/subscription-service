@@ -1,10 +1,12 @@
 package upc.edu.pe.foodflow.subscription.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "subscription_plans")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SubscriptionPlan {
 
     @Id
@@ -27,7 +29,7 @@ public class SubscriptionPlan {
     @Column(nullable = false)
     private boolean active = true;
 
-    protected SubscriptionPlan() {} // JPA
+    protected SubscriptionPlan() {} // Constructor requerido por JPA
 
     public SubscriptionPlan(String name, BigDecimal price, BillingPeriod billingPeriod, String description) {
         this.name = name;

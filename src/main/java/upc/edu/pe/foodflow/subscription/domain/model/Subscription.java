@@ -1,5 +1,6 @@
 package upc.edu.pe.foodflow.subscription.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,7 +14,8 @@ public class Subscription {
 
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "plan_id", nullable = false)
     private SubscriptionPlan plan;
 
@@ -26,7 +28,7 @@ public class Subscription {
 
     private String paymentTransactionId;
 
-    protected Subscription() {} // JPA
+    protected Subscription() {} // Constructor requerido por JPA
 
     public Subscription(Long userId, SubscriptionPlan plan, LocalDateTime startDate, LocalDateTime endDate) {
         this.userId = userId;
@@ -45,7 +47,6 @@ public class Subscription {
     public LocalDateTime getEndDate() { return endDate; }
     public String getPaymentTransactionId() { return paymentTransactionId; }
 
-    // Domain behaviors
     public void activate(String transactionId) {
         this.status = SubscriptionStatus.ACTIVE;
         this.paymentTransactionId = transactionId;
