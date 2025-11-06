@@ -1,6 +1,8 @@
 package upc.edu.pe.foodflow.subscription.interfaces.controller;
 
+import upc.edu.pe.foodflow.subscription.application.dto.CreatePlanRequest;
 import upc.edu.pe.foodflow.subscription.application.dto.PaymentData;
+import upc.edu.pe.foodflow.subscription.application.dto.SubscriptionRequest;
 import upc.edu.pe.foodflow.subscription.application.service.SubscriptionService;
 import upc.edu.pe.foodflow.subscription.domain.model.Subscription;
 import upc.edu.pe.foodflow.subscription.domain.model.SubscriptionPlan;
@@ -30,20 +32,40 @@ public class SubscriptionController {
         return ResponseEntity.ok(plans);
     }
 
+    // POST: Crear un nuevo plan (ADMIN)
+    @PostMapping("/plans")
+    public ResponseEntity<SubscriptionPlan> createPlan(@RequestBody CreatePlanRequest request) {
+        SubscriptionPlan plan = new SubscriptionPlan(
+                request.name(),
+                request.price(),
+                request.billingPeriod(),
+                request.description()
+        );
+        SubscriptionPlan savedPlan = planRepository.save(plan);
+        return ResponseEntity.ok(savedPlan);
+    }
+
     // POST: Suscribir usuario a un plan
     @PostMapping("/subscribe/{userId}")
     public ResponseEntity<?> subscribe(
             @PathVariable Long userId,
-            @RequestParam String planName,
-            @RequestBody PaymentData paymentData
+            @RequestBody SubscriptionRequest request
     ) {
-        Optional<Subscription> subscriptionOpt = subscriptionService.subscribeUser(userId, planName, paymentData);
+        try {
+            Optional<Subscription> subscriptionOpt = subscriptionService.subscribeUser(
+                    userId,
+                    request.planName(),
+                    request.paymentData()
+            );
 
-        if (subscriptionOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Payment could not be processed or invalid plan.");
+            if (subscriptionOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body("Payment could not be processed or invalid plan.");
+            }
+
+            return ResponseEntity.ok(subscriptionOpt.get());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        return ResponseEntity.ok(subscriptionOpt.get());
     }
 
     // GET: Consultar la suscripción activa del usuario
