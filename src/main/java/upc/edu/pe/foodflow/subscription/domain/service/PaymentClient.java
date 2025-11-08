@@ -6,5 +6,7 @@ import upc.edu.pe.foodflow.subscription.application.dto.PaymentResult;
 
 public interface PaymentClient {
 
+
+
     PaymentResult processPayment(PaymentData data);
 }

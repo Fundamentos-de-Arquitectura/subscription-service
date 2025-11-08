@@ -28,7 +28,7 @@ public class SubscriptionController {
     // GET: Listar todos los planes disponibles
     @GetMapping("/plans")
     public ResponseEntity<List<SubscriptionPlan>> getPlans() {
-        List<SubscriptionPlan> plans = planRepository.findAllActive();
+        List<SubscriptionPlan> plans = planRepository.findAllByActiveTrue();
         return ResponseEntity.ok(plans);
     }
 

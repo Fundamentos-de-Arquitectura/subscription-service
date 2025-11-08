@@ -13,9 +13,9 @@ public interface JpaPlanRepository extends JpaRepository<SubscriptionPlan, Long>
 
     List<SubscriptionPlan> findByActiveTrue();
 
-    Optional<SubscriptionPlan> findByName(String name);
+    Optional<SubscriptionPlan> findByNameIgnoreCase(String name);
 
-    default List<SubscriptionPlan> findAllActive() {
+    default List<SubscriptionPlan> findAllByActiveTrue() {
         return findByActiveTrue();
     }
 }

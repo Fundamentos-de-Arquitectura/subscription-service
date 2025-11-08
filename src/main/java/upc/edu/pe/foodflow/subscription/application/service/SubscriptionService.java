@@ -32,7 +32,8 @@ public class SubscriptionService {
     }
 
     public Optional<Subscription> subscribeUser(Long userId, String planName, PaymentData paymentData) {
-        Optional<SubscriptionPlan> planOpt = planRepository.findByName(planName);
+        System.out.println("Buscando plan: " + planName);
+        Optional<SubscriptionPlan> planOpt = planRepository.findByNameIgnoreCase(planName);
         if (planOpt.isEmpty()) {
             throw new IllegalArgumentException("El plan solicitado no existe: " + planName);
         }
