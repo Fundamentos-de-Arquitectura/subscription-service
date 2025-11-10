@@ -1,8 +1,10 @@
 package upc.edu.pe.foodflow.subscription.interfaces.controller;
 
 import upc.edu.pe.foodflow.subscription.application.dto.CreatePlanRequest;
+import upc.edu.pe.foodflow.subscription.application.dto.CreateSubscriptionRequest;
 import upc.edu.pe.foodflow.subscription.application.dto.PaymentData;
 import upc.edu.pe.foodflow.subscription.application.dto.SubscriptionRequest;
+import upc.edu.pe.foodflow.subscription.application.dto.SubscriptionResponse;
 import upc.edu.pe.foodflow.subscription.application.service.SubscriptionService;
 import upc.edu.pe.foodflow.subscription.domain.model.Subscription;
 import upc.edu.pe.foodflow.subscription.domain.model.SubscriptionPlan;
@@ -84,5 +86,51 @@ public class SubscriptionController {
             return ResponseEntity.badRequest().body("No active subscription found to cancel.");
         }
         return ResponseEntity.ok("Subscription cancelled successfully.");
+    }
+
+    // POST: Crear suscripción por defecto (sin pago) para nuevo usuario
+    @PostMapping("/create-default")
+    public ResponseEntity<SubscriptionResponse> createDefaultSubscription(
+            @RequestBody CreateSubscriptionRequest request
+    ) {
+        Optional<Subscription> subscriptionOpt = subscriptionService.createDefaultSubscription(request.userId());
+        
+        if (subscriptionOpt.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Subscription subscription = subscriptionOpt.get();
+        SubscriptionResponse response = new SubscriptionResponse(
+                subscription.getId(),
+                subscription.getUserId(),
+                subscription.getPlan().getName(),
+                subscription.getStatus().toString(),
+                subscription.getStartDate(),
+                subscription.getEndDate()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    // GET: Obtener suscripción por ID
+    @GetMapping("/by-id/{subscriptionId}")
+    public ResponseEntity<SubscriptionResponse> getSubscriptionById(@PathVariable Long subscriptionId) {
+        Optional<Subscription> subscriptionOpt = subscriptionService.getSubscriptionById(subscriptionId);
+        
+        if (subscriptionOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Subscription subscription = subscriptionOpt.get();
+        SubscriptionResponse response = new SubscriptionResponse(
+                subscription.getId(),
+                subscription.getUserId(),
+                subscription.getPlan().getName(),
+                subscription.getStatus().toString(),
+                subscription.getStartDate(),
+                subscription.getEndDate()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
